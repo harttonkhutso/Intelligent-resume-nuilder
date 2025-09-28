@@ -1,0 +1,5 @@
+{
+  "name": "Intelligent Resume Generator",
+  "description": "An intelligent resume generation system that creates customized, ATS-friendly resumes based on user inputs and leverages AI for content generation, keyword optimization, and job description matching.",
+  "requestFramePermissions": []
+}

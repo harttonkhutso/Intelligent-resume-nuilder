@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-ag" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intelligent Resume Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: '#007BFF',
+                dark: '#0056b3',
+              },
+              secondary: '#6c757d',
+              light: '#f8f9fa',
+              dark: '#343a40',
+            },
+            animation: {
+              'spin-slow': 'spin 3s linear infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'walk-across': 'walkAcross 15s linear infinite',
+              'follow-text': 'followText 15s linear infinite',
+              'walk-leg-left': 'walkLegLeft 1.2s ease-in-out infinite',
+              'walk-leg-right': 'walkLegRight 1.2s ease-in-out infinite',
+              'walk-arm-left': 'walkArmLeft 1.2s ease-in-out infinite',
+              'walk-arm-right': 'walkArmRight 1.2s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              walkAcross: {
+                '0%': { transform: 'translateX(-150px)' },
+                '100%': { transform: 'translateX(100vw)' },
+              },
+              followText: {
+                '0%, 15%': { opacity: '0' },
+                '20%': { opacity: '1' },
+                '90%': { opacity: '1' },
+                '100%': { opacity: '0' },
+              },
+              walkLegLeft: {
+                '0%, 100%': { transform: 'rotate(-25deg)' },
+                '50%': { transform: 'rotate(25deg)' },
+              },
+              walkLegRight: {
+                '0%, 100%': { transform: 'rotate(25deg)' },
+                '50%': { transform: 'rotate(-25deg)' },
+              },
+              walkArmLeft: {
+                '0%, 100%': { transform: 'rotate(20deg)' },
+                '50%': { transform: 'rotate(-20deg)' },
+              },
+              walkArmRight: {
+                '0%, 100%': { transform: 'rotate(-20deg)' },
+                '50%': { transform: 'rotate(20deg)' },
+              },
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.21.0",
+    "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1",
+    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.3",
+    "docx": "https://aistudiocdn.com/docx@^9.5.1"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-100">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
