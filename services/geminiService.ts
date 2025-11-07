@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ResumeData } from '../types';
 
@@ -150,7 +151,7 @@ export async function matchJobDescription(resumeText: string, jobDescription: st
 }
 
 export async function parseResume(fileData: { mimeType: string; data: string }): Promise<Partial<ResumeData>> {
-  const prompt = `Parse the provided resume file and extract its content into a structured JSON object. The resume is provided as a base64 encoded file. Identify all sections: personal information (including name, email, phone, linkedin, website), a professional summary, a list of work experiences (each with title, company, location, start and end dates, and a description of responsibilities/achievements), a list of educational qualifications (with degree, university, location, and graduation date), and a list of skills. Ensure dates are concise strings. Format descriptions as bullet points separated by escaped newlines (\\n). If a field is not found, omit it from the JSON. IMPORTANT: Ensure the output is a single, valid JSON object with no extraneous text, and correctly escape all double quotes and other special characters within string values.`;
+  const prompt = `Parse the provided resume file and extract its content into a structured JSON object. The resume is provided as a base64 encoded file. Identify all sections: personal information (including name, email, phone, linkedin, website), a professional summary, a list of work experiences (each with title, company, location, start and end dates, and a description of responsibilities/achievements), a list of educational qualifications (with degree, university, location, and graduation date), a list of certificates (with name, issuer, and date), and a list of skills. Ensure dates are concise strings. Format descriptions as bullet points separated by escaped newlines (\\n). If a field is not found, omit it from the JSON. IMPORTANT: Ensure the output is a single, valid JSON object with no extraneous text, and correctly escape all double quotes and other special characters within string values.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
@@ -209,6 +210,18 @@ export async function parseResume(fileData: { mimeType: string; data: string }):
               required: ['degree', 'university'],
             },
           },
+          certificates: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                name: { type: Type.STRING },
+                issuer: { type: Type.STRING },
+                date: { type: Type.STRING },
+              },
+              required: ['name', 'issuer'],
+            }
+          },
           skills: {
             type: Type.ARRAY,
             items: { type: Type.STRING },
@@ -233,6 +246,9 @@ export async function parseResume(fileData: { mimeType: string; data: string }):
     }
     if (parsedData.education) {
         parsedData.education = parsedData.education.map(edu => ({ ...edu, id: Date.now() + Math.random() }));
+    }
+    if (parsedData.certificates) {
+        parsedData.certificates = parsedData.certificates.map(cert => ({ ...cert, id: Date.now() + Math.random() }));
     }
     return parsedData;
   } catch (e) {

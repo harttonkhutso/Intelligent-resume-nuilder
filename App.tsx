@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { ResumeData, AnalysisResult, AnalysisType, LoadingStates, Template, Font } from './types';
+import { ResumeData, AnalysisResult, AnalysisType, LoadingStates, Template, Font, Certificate } from './types';
 import ResumeForm from './components/ResumeForm';
 import ResumePreview from './components/ResumePreview';
 import AnalysisPanel from './components/AnalysisPanel';
@@ -19,6 +19,9 @@ const initialResumeData: ResumeData = {
   ],
   education: [
     { id: 1, degree: 'B.S. in Computer Science', university: 'State University', location: 'Anytown, USA', gradDate: 'May 2021' },
+  ],
+  certificates: [
+    { id: 1, name: 'Advanced React Certification', issuer: 'React University', date: '2022' }
   ],
   skills: ['React', 'TypeScript', 'Node.js', 'Tailwind CSS', 'Problem Solving'],
 };
@@ -78,6 +81,12 @@ const App: React.FC = () => {
     resumeData.education.forEach(edu => {
       text += `${edu.degree}, ${edu.university} (${edu.gradDate})\n`;
     });
+    if (resumeData.certificates && resumeData.certificates.length > 0) {
+      text += `\nCertificates:\n`;
+      resumeData.certificates.forEach(cert => {
+          text += `${cert.name} from ${cert.issuer} (${cert.date})\n`;
+      });
+    }
     if (includeSkills) {
       text += `\nSkills: ${resumeData.skills.join(', ')}`;
     }
@@ -88,8 +97,29 @@ const App: React.FC = () => {
     setLoadingStates(prev => ({ ...prev, summary: true }));
     setAnalysisResult(null);
     try {
-      const resumeText = getResumeAsText();
-      const prompt = `Based on the following resume, write a compelling and professional summary of 2-3 sentences:\n\n${resumeText}`;
+      // Create a focused text representation of the resume for summary generation.
+      let resumeContext = "WORK EXPERIENCE:\n";
+      resumeData.experience.forEach(exp => {
+        resumeContext += `${exp.title} at ${exp.company}\n${exp.description}\n\n`;
+      });
+      
+      resumeContext += "EDUCATION:\n";
+      resumeData.education.forEach(edu => {
+        resumeContext += `${edu.degree}, ${edu.university}\n\n`;
+      });
+
+      if (resumeData.skills.length > 0) {
+        resumeContext += `SKILLS:\n${resumeData.skills.join(', ')}`;
+      }
+
+      let prompt: string;
+      
+      if (jobDescription) {
+        prompt = `Based on the following resume details and the target job description, write a compelling and professional summary of 2-3 sentences. The summary should be tailored to the role, highlighting the most relevant experience and skills.\n\n## TARGET JOB DESCRIPTION:\n${jobDescription}\n\n## RESUME DETAILS:\n${resumeContext}`;
+      } else {
+        prompt = `Based on the following resume details, write a compelling and professional summary of 2-3 sentences that highlights key achievements and skills.\n\n## RESUME DETAILS:\n${resumeContext}`;
+      }
+
       const summary = await generateExperiencePoints(prompt);
       setResumeData(prev => ({...prev, summary}));
     } catch (error) {
@@ -98,7 +128,7 @@ const App: React.FC = () => {
     } finally {
       setLoadingStates(prev => ({ ...prev, summary: false }));
     }
-  }, [getResumeAsText]);
+  }, [resumeData.experience, resumeData.education, resumeData.skills, jobDescription]);
   
   const handleGenerateExperience = useCallback(async (expId: number) => {
     setLoadingStates(prev => ({ ...prev, experience: expId }));
@@ -252,6 +282,7 @@ const App: React.FC = () => {
               summary: parsedData.summary || prev.summary,
               experience: parsedData.experience && parsedData.experience.length > 0 ? parsedData.experience : prev.experience,
               education: parsedData.education && parsedData.education.length > 0 ? parsedData.education : prev.education,
+              certificates: parsedData.certificates && parsedData.certificates.length > 0 ? parsedData.certificates : (prev.certificates || []),
               skills: parsedData.skills && parsedData.skills.length > 0 ? parsedData.skills : prev.skills,
             }));
             setShowBuilder(true);
@@ -367,6 +398,15 @@ const App: React.FC = () => {
               new TextRun(` at ${edu.university} (${edu.gradDate})`),
             ]
           })),
+          ...(resumeData.certificates && resumeData.certificates.length > 0 ? [
+            new Paragraph({ text: "Certificates", heading: HeadingLevel.HEADING_2, border: { bottom: { color: "auto", space: 1, value: "single", size: 6 } } }),
+            ...resumeData.certificates.map(cert => new Paragraph({
+              children: [
+                new TextRun({ text: cert.name, bold: true }),
+                new TextRun(` from ${cert.issuer} (${cert.date})`),
+              ]
+            })),
+          ] : []),
           new Paragraph({ text: "Skills", heading: HeadingLevel.HEADING_2, border: { bottom: { color: "auto", space: 1, value: "single", size: 6 } } }),
           new Paragraph(resumeData.skills.join(', ')),
         ],

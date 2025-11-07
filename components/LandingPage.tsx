@@ -106,7 +106,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartBuilding, onUploadResu
             </section>
 
             {/* How It Works Section */}
-            <section className="bg-white py-20">
+            <section className="bg-slate-100 py-20">
                  <div className="container mx-auto px-6">
                     <div className="text-center mb-12">
                         <h3 className="text-3xl font-bold text-gray-800">Simple, Fast, and Effective</h3>

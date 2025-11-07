@@ -43,6 +43,17 @@ const ClassicTemplate: React.FC<{ resumeData: ResumeData }> = ({ resumeData }) =
                 </div>
             ))}
         </div>
+        {resumeData.certificates && resumeData.certificates.length > 0 && (
+            <div className="mt-6">
+                <h2 style={{ borderColor: 'var(--secondary-color)' }} className="text-lg font-bold border-b-2 inline-block mb-2">CERTIFICATES</h2>
+                {resumeData.certificates.map(cert => (
+                    <div key={cert.id} className="mb-2">
+                        <div className="flex justify-between items-baseline"><h3 className="text-md font-bold">{cert.name}</h3><p className="text-sm font-light">{cert.date}</p></div>
+                        <p className="text-md italic">{cert.issuer}</p>
+                    </div>
+                ))}
+            </div>
+        )}
         <div className="mt-6"><h2 style={{ borderColor: 'var(--secondary-color)' }} className="text-lg font-bold border-b-2 inline-block mb-2">SKILLS</h2><p className="text-sm">{resumeData.skills.join(' | ')}</p></div>
     </div>
 );
@@ -112,6 +123,22 @@ const ModernTemplate: React.FC<{ resumeData: ResumeData }> = ({ resumeData }) =>
                     </div>
                 ))}
             </div>
+            {resumeData.certificates && resumeData.certificates.length > 0 && (
+                <div className="mt-6">
+                    <h2 style={{ color: 'var(--primary-color)', borderColor: 'var(--primary-color)' }} className="text-xl font-semibold uppercase tracking-wider mb-4 border-b-2 pb-2">CERTIFICATES</h2>
+                    {resumeData.certificates.map(cert => (
+                        <div key={cert.id} className="mb-3">
+                            <div className="flex justify-between items-baseline">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-800">{cert.name}</h3>
+                                    <p className="text-md italic text-gray-600">{cert.issuer}</p>
+                                </div>
+                                <p className="text-sm text-gray-500 font-medium whitespace-nowrap pl-4">{cert.date}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     </div>
 );
@@ -145,6 +172,17 @@ const MinimalistTemplate: React.FC<{ resumeData: ResumeData }> = ({ resumeData }
                 </div>
             ))}
         </div>
+        {resumeData.certificates && resumeData.certificates.length > 0 && (
+            <div className="mt-8">
+                <h2 style={{ color: 'var(--secondary-color)' }} className="text-xs font-semibold uppercase tracking-widest text-center mb-4">Certificates</h2>
+                {resumeData.certificates.map(cert => (
+                    <div key={cert.id} className="mb-2 flex justify-between items-baseline text-md">
+                        <div><h3 className="font-semibold text-gray-800">{cert.name}</h3><p className="text-sm text-gray-600">{cert.issuer}</p></div>
+                        <span className="text-sm font-light text-gray-500">{cert.date}</span>
+                    </div>
+                ))}
+            </div>
+        )}
         <div className="mt-8">
             <h2 style={{ color: 'var(--secondary-color)' }} className="text-xs font-semibold uppercase tracking-widest text-center mb-4">Skills</h2>
             <p className="text-sm text-center text-gray-600">{resumeData.skills.join(' • ')}</p>

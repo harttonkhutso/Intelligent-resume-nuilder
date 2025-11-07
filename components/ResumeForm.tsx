@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { ResumeData, LoadingStates, Experience, Education } from '../types';
+import { ResumeData, LoadingStates, Experience, Education, Certificate } from '../types';
 import { PlusIcon, TrashIcon, SparklesIcon, DownloadIcon, DocumentTextIcon, CodeBracketIcon, LightBulbIcon, ChatBubbleLeftRightIcon, EnvelopeIcon, ChevronDownIcon } from './icons';
 
 interface ResumeFormProps {
@@ -94,6 +95,7 @@ const ResumeForm: React.FC<ResumeFormProps> = ({
 
   const experienceSectionRef = useRef<HTMLDivElement>(null);
   const educationSectionRef = useRef<HTMLDivElement>(null);
+  const certificatesSectionRef = useRef<HTMLDivElement>(null);
   
   const toggleSection = (section: string) => {
     setOpenSections(prev => 
@@ -107,6 +109,7 @@ const ResumeForm: React.FC<ResumeFormProps> = ({
     const refs: { [key: string]: React.RefObject<HTMLDivElement> } = {
         'Work Experience': experienceSectionRef,
         'Education': educationSectionRef,
+        'Certificates': certificatesSectionRef,
     };
 
     if (scrollToSection && refs[scrollToSection]?.current) {
@@ -182,6 +185,19 @@ const ResumeForm: React.FC<ResumeFormProps> = ({
 
   const removeEducation = (id: number) => {
     setResumeData(prev => ({ ...prev, education: prev.education.filter(edu => edu.id !== id) }));
+  };
+
+  const addCertificate = () => {
+    const newCert: Certificate = { id: Date.now(), name: '', issuer: '', date: '' };
+    setResumeData(prev => ({ ...prev, certificates: [...(prev.certificates || []), newCert] }));
+    if (!openSections.includes('Certificates')) {
+        setOpenSections(prev => [...prev, 'Certificates']);
+        setScrollToSection('Certificates');
+    }
+  };
+
+  const removeCertificate = (id: number) => {
+    setResumeData(prev => ({ ...prev, certificates: prev.certificates.filter(cert => cert.id !== id) }));
   };
 
   const renderLoadingSpinner = () => <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>;
@@ -291,6 +307,18 @@ const ResumeForm: React.FC<ResumeFormProps> = ({
                 </div>
             ))}
             <button onClick={addEducation} className="flex items-center gap-2 mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors"><PlusIcon /> Add Education</button>
+        </AccordionSection>
+
+        <AccordionSection ref={certificatesSectionRef} title="Certificates" isOpen={openSections.includes('Certificates')} onToggle={() => toggleSection('Certificates')}>
+            {(resumeData.certificates || []).map(cert => (
+                <div key={cert.id} className="p-4 border rounded-md mb-4 space-y-4 bg-slate-50 relative">
+                  <button onClick={() => removeCertificate(cert.id)} className="absolute top-2 right-2 text-red-500 hover:text-red-700" title="Remove Certificate"><TrashIcon /></button>
+                    <Input label="Certificate Name" value={cert.name} onChange={e => handleChange('certificates', 'name', e.target.value, cert.id)} />
+                    <Input label="Issuing Organization" value={cert.issuer} onChange={e => handleChange('certificates', 'issuer', e.target.value, cert.id)} />
+                    <Input label="Date Issued" value={cert.date} onChange={e => handleChange('certificates', 'date', e.target.value, cert.id)} />
+                </div>
+            ))}
+            <button onClick={addCertificate} className="flex items-center gap-2 mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors"><PlusIcon /> Add Certificate</button>
         </AccordionSection>
         
         <AccordionSection title="Skills" isOpen={openSections.includes('Skills')} onToggle={() => toggleSection('Skills')}>
